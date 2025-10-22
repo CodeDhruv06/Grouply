@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root{
+	--bg: #1f1710;
+	--gold: #c99a2a;
+	--muted: #c9bdaf;
+}
+
+html,body,#root{height:100%}
+body{margin:0;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto;background:var(--bg);color:var(--muted)}
+
+:root {
+  --bg: #ffffff;
+  --navbar-bg: #faf7f2;
+  --gold: #b99849;
+  --muted: #4b5563;
+  --hover: rgba(0, 0, 0, 0.04);
+  --active-bg: rgba(185, 152, 73, 0.1);
+  --active-text: #b99849;
+  --border: rgba(0, 0, 0, 0.1);
+}
+
+/* 🌙 Dark Theme */
+.dark {
+  --bg: #121212;
+  --navbar-bg: #1e1e1e;
+  --gold: #f0d188;
+  --muted: #d1d5db;
+  --hover: rgba(255, 255, 255, 0.05);
+  --active-bg: rgba(240, 209, 136, 0.15);
+  --active-text: #f0d188;
+  --border: rgba(255, 255, 255, 0.1);
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--muted);
+  transition: background-color 0.3s, color 0.3s;
+}

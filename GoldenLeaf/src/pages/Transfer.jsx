@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { FaArrowCircleUp, FaCheckCircle } from "react-icons/fa";
 import Loader from "../Components/Loader";
 import { useNavigate } from 'react-router-dom';
+import API from "../api";
 
 export default function Transfer() {
   const [recipient, setRecipient] = useState("");

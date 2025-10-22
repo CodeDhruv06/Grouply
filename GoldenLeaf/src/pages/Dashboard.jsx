@@ -43,8 +43,8 @@ export default function Dashboard() {
   const fetchDashboard = async () => {
     try {
       const email = localStorage.getItem("userEmail");
-      const res = await fetch(`http://localhost:5000/api/v1/dashboard/${email}`);
-      const data = await res.json();
+      const res = await API.get(`/dashboard/${email}`);
+      const data = res.data;
 
       if (res.ok) {
         setBalance(Number(data.balance) || 0);
@@ -151,29 +151,26 @@ export default function Dashboard() {
             setSuggestionUpdatedAt(cached.ts);
             return; // skip network
           }
-        } catch {}
+        } catch { }
       }
 
       inFlight.current = true;
       setSuggestionLoading(true);
-      const response = await fetch("http://localhost:5000/api/v1/gemini/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt, email, force }),
-      });
-
       let text = "";
       try {
-        const data = await response.json();
-        text = data?.suggestion || "";
-        if (!response.ok && !text) {
-          // if server returned note with cached suggestion, prefer it
-          text = data?.note ? `${data.note}` : "";
+        const { data } = await API.post("/gemini/generate", { prompt, email, force });
+
+        // Access data directly (Axios auto-parses JSON)
+        text = data?.suggestion || data?.note || "";
+
+        if (!text) {
+          text = "Couldn’t fetch AI suggestion right now. Try again later.";
         }
-      } catch {}
-      if (!text) {
-        text = "Couldn’t fetch AI suggestion right now. Try again later.";
+      } catch (error) {
+        console.error("Gemini API Error:", error);
+        text = "⚠️ Something went wrong while fetching AI suggestion.";
       }
+
       setSuggestion(text);
       const ts = Date.now();
       setSuggestionUpdatedAt(ts);

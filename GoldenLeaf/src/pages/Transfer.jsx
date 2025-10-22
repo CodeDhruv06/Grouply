@@ -25,20 +25,17 @@ export default function Transfer() {
     setStatus("Processing transaction...");
 
     try {
-      const response = await fetch("http://localhost:5000/api/v1/payments/send", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          senderEmail,          // ✅ Correct key for backend
-          recipientEmail: recipient,
-          amount: parseFloat(amount),
-          note,
-        }),
+      const res = await API.post('/payments/send', {
+        senderEmail,
+        recipientEmail: recipient,
+        amount: parseFloat(amount),
+        note,
       });
 
-      const data = await response.json();
+      const data = res.data;
 
-      if (response.ok) {
+
+      if (res.ok) {
         const cb = Number(data.cashback || 0);
         const cbMsg = cb > 0 ? ` You earned ₹${cb} cashback!` : "";
         setStatus(`✅ ${data.message}${cbMsg}`);

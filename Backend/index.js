@@ -7,7 +7,12 @@ const app = express()
 const mainrouter = require('./Routes/index')
 const PORT = process.env.PORT || 5000
 
-app.use(cors({ origin: true, credentials: true }))
+app.use(cors({
+  origin: ["http://localhost:5173", "https://grouply-ky58.onrender.com"], // ✅ allow local + production
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
 app.use(express.json())
 app.use(helmet())
 app.use('/api/v1', mainrouter)

@@ -16,7 +16,7 @@ export default function Login() {
     setError('')
     setLoading(true)
     try {
-          const res = await API.post('/api/v1/user/login', { email, password })
+          const res = await API.post('/user/login', { email, password })
       if (res?.data?.token) {
         localStorage.setItem('token', res.data.token)
         navigate('/home')

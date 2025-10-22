@@ -22,8 +22,6 @@ export default function SplitBill() {
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null); // ✅ new toast popup system
 
-  const API_BASE = 'http://localhost:5000/api/v1';
-
   // 🔔 Helper to show toast popup
   const showToast = (message, type = "success") => {
     setToast({ message, type });
@@ -34,8 +32,8 @@ export default function SplitBill() {
 
   async function fetchGroups() {
     try {
-      const res = await fetch(`${API_BASE}/split/my-groups?email=${encodeURIComponent(myEmail)}`);
-      const data = await res.json();
+      const res = await API.get(`/split/my-groups?email=${encodeURIComponent(myEmail)}`);
+      const data = res.data;
       if (res.ok) {
         setGroups(data.groups || []);
         if ((data.groups || []).length) setSelectedGroup(data.groups[0]._id);
@@ -51,12 +49,13 @@ export default function SplitBill() {
     setLoading(true);
     try {
       const memberList = memberEmails.split(',').map(s => s.trim()).filter(Boolean);
-      const res = await fetch(`${API_BASE}/split/create-group`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: groupName, memberEmails: memberList, createdByEmail: myEmail })
+      const res = await API.post('/split/create-group', {
+        name: groupName,
+        memberEmails: memberList,
+        createdByEmail: myEmail,
       });
-      const data = await res.json();
+      const data = res.data;
+
       if (res.ok) {
         showToast('✅ Group created successfully!');
         setGroupName('');
@@ -75,8 +74,8 @@ export default function SplitBill() {
   async function fetchBillsForSelectedGroup(gid) {
     if (!gid) return setBills([]);
     try {
-      const res = await fetch(`${API_BASE}/split/group/${gid}/bills`);
-      const data = await res.json();
+      const res = await API.get(`/split/group/${gid}/bills`);
+      const data = res.data;
       if (res.ok) setBills(data.bills || []);
     } catch (err) {
       console.error(err);
@@ -117,12 +116,8 @@ export default function SplitBill() {
       if (splitType === 'custom') {
         payload.customSplits = customSplits.map(c => ({ email: c.email, amount: Number(c.amount) }));
       }
-      const res = await fetch(`${API_BASE}/split/create-bill`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json();
+      const res = await API.post('/split/create-bill', payload);
+      const data = res.data;
       if (res.ok) {
         showToast('✅ Bill created successfully!');
         setTitle('');
@@ -143,12 +138,10 @@ export default function SplitBill() {
 
   async function previewSettlement(billId) {
     try {
-      const res = await fetch(`${API_BASE}/split/bill/${billId}/settle`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ execute: false })
+      const res = await API.post(`/split/bill/${billId}/settle`, {
+        execute: false,
       });
-      const data = await res.json();
+      const data = res.data;
       if (res.ok) {
         setSettlementPreview({ billId, settlements: data.settlements });
         showToast('👀 Settlement preview ready.');
@@ -165,12 +158,11 @@ export default function SplitBill() {
     if (!confirm('Execute settlement now?')) return;
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/split/bill/${billId}/settle`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ execute: true, executorEmail: myEmail })
+      const res = await API.post(`/split/bill/${billId}/settle`, {
+        execute: true,
+        executorEmail: myEmail,
       });
-      const data = await res.json();
+      const data = res.data;
       if (res.ok) {
         showToast('✅ Settlement executed successfully!');
         fetchBillsForSelectedGroup(selectedGroup);
@@ -216,9 +208,9 @@ export default function SplitBill() {
           <FaCoins /> Create Group
         </h2>
         <form onSubmit={createGroup} className="space-y-3">
-          <input value={groupName} onChange={e=>setGroupName(e.target.value)} placeholder="Group name"
+          <input value={groupName} onChange={e => setGroupName(e.target.value)} placeholder="Group name"
             className="p-2 border border-[#3a2a17] bg-[#1a1208] text-white rounded w-full" />
-          <input value={memberEmails} onChange={e=>setMemberEmails(e.target.value)} placeholder="Member emails (comma separated)"
+          <input value={memberEmails} onChange={e => setMemberEmails(e.target.value)} placeholder="Member emails (comma separated)"
             className="p-2 border border-[#3a2a17] bg-[#1a1208] text-white rounded w-full" />
           <button disabled={loading}
             className="bg-[#E86A33] hover:bg-[#b85824] transition text-white px-4 py-2 rounded shadow-md">
@@ -230,10 +222,10 @@ export default function SplitBill() {
       {/* Groups */}
       <section className="bg-[#20160b] rounded-2xl p-6 mb-6 shadow-lg">
         <h2 className="font-medium text-xl text-[#f7d58b]">Groups</h2>
-        <select value={selectedGroup || ''} onChange={e=>setSelectedGroup(e.target.value)}
+        <select value={selectedGroup || ''} onChange={e => setSelectedGroup(e.target.value)}
           className="p-2 mt-3 border border-[#3a2a17] bg-[#1a1208] text-white rounded w-full">
           <option value="">-- Select group --</option>
-          {groups.map(g=>(
+          {groups.map(g => (
             <option key={g._id} value={g._id}>{g.name} ({g.members.length} members)</option>
           ))}
         </select>
@@ -247,20 +239,20 @@ export default function SplitBill() {
               <FaReceipt /> Create Bill
             </h2>
             <form onSubmit={createBill} className="space-y-3">
-              <input value={title} onChange={e=>setTitle(e.target.value)} placeholder="Bill title"
+              <input value={title} onChange={e => setTitle(e.target.value)} placeholder="Bill title"
                 className="p-2 border border-[#3a2a17] bg-[#1a1208] text-white rounded w-full" />
-              <input value={totalAmount} onChange={e=>setTotalAmount(e.target.value)} placeholder="Total amount"
+              <input value={totalAmount} onChange={e => setTotalAmount(e.target.value)} placeholder="Total amount"
                 className="p-2 border border-[#3a2a17] bg-[#1a1208] text-white rounded w-full" />
-              <select value={payerEmail} onChange={e=>setPayerEmail(e.target.value)}
+              <select value={payerEmail} onChange={e => setPayerEmail(e.target.value)}
                 className="p-2 border border-[#3a2a17] bg-[#1a1208] text-white rounded w-full">
-                {(groups.find(g=>g._id===selectedGroup)?.members || []).map(m=>(
+                {(groups.find(g => g._id === selectedGroup)?.members || []).map(m => (
                   <option key={m.email} value={m.email}>{m.name || m.email}</option>
                 ))}
               </select>
 
               <div>
                 <label className="block text-sm mb-1 text-[#c8a75a]">Split Type</label>
-                <select value={splitType} onChange={e=>setSplitType(e.target.value)}
+                <select value={splitType} onChange={e => setSplitType(e.target.value)}
                   className="p-2 border border-[#3a2a17] bg-[#1a1208] text-white rounded w-full">
                   <option value="equal">Equal</option>
                   <option value="custom">Custom</option>
@@ -271,8 +263,8 @@ export default function SplitBill() {
                 <div key={idx} className="flex gap-2">
                   <input className="p-2 border border-[#3a2a17] bg-[#1a1208] text-white rounded flex-1" value={c.email} disabled />
                   <input className="p-2 border border-[#3a2a17] bg-[#1a1208] text-white rounded w-32" value={c.amount}
-                    onChange={e=>{
-                      const arr=[...customSplits]; arr[idx].amount=e.target.value; setCustomSplits(arr);
+                    onChange={e => {
+                      const arr = [...customSplits]; arr[idx].amount = e.target.value; setCustomSplits(arr);
                     }} placeholder="amount" />
                 </div>
               ))}
@@ -298,9 +290,9 @@ export default function SplitBill() {
                     </div>
                     {b.status !== 'SETTLED' && (
                       <div className="flex flex-col gap-2">
-                        <button onClick={()=>previewSettlement(b._id)}
+                        <button onClick={() => previewSettlement(b._id)}
                           className="px-3 py-1 bg-yellow-500 hover:bg-yellow-600 text-black rounded">Preview</button>
-                        <button onClick={()=>executeSettlement(b._id)}
+                        <button onClick={() => executeSettlement(b._id)}
                           className="px-3 py-1 bg-red-600 hover:bg-red-700 rounded">Settle</button>
                       </div>
                     )}
@@ -344,9 +336,8 @@ export default function SplitBill() {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 50, opacity: 0 }}
             transition={{ duration: 0.4 }}
-            className={`fixed bottom-8 left-1/2 transform -translate-x-1/2 px-5 py-3 rounded-full shadow-lg text-white flex items-center gap-2 ${
-              toast.type === 'error' ? 'bg-red-600' : 'bg-green-600'
-            }`}
+            className={`fixed bottom-8 left-1/2 transform -translate-x-1/2 px-5 py-3 rounded-full shadow-lg text-white flex items-center gap-2 ${toast.type === 'error' ? 'bg-red-600' : 'bg-green-600'
+              }`}
           >
             <FaCheckCircle />
             {toast.message}

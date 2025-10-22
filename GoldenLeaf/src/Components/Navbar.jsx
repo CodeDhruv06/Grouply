@@ -26,7 +26,7 @@ export default function Navbar() {
     const token = localStorage.getItem('token');
     if (!token) return; // not logged in
     let alive = true;
-    API.get('/api/v1/user/me')
+    API.get('/user/me')
       .then((res) => {
         if (!alive) return;
         const { name, email } = res.data || {};

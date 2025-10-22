@@ -18,7 +18,7 @@ export default function Signup() {
       setError('')
       setLoading(true)
       try {
-      const res = await API.post('/api/v1/user/signup', 
+      const res = await API.post('/user/signup', 
             { name, email, password })
           if (res?.data?.token) {
               localStorage.setItem('token', res.data.token)

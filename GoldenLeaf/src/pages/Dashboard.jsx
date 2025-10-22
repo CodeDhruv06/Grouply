@@ -3,6 +3,7 @@ import Navbar from "../Components/Navbar";
 import { motion } from "framer-motion";
 import { FaWallet, FaChartPie, FaPiggyBank, FaRobot } from "react-icons/fa";
 import StatCard from "../Components/StatCard";
+import API from "../api";
 import {
   PieChart,
   Pie,

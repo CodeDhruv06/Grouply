@@ -8,7 +8,7 @@ const mainrouter = require('./Routes/index')
 const PORT = process.env.PORT || 5000
 
 app.use(cors({
-  origin: ["http://localhost:5173", "https://grouply.netlify.app/"], // ✅ allow local + production
+  origin: ["http://localhost:5173", "https://grouply.netlify.app"], // ✅ allow local + production
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],

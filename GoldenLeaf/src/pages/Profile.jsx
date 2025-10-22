@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { FaWallet, FaChartLine, FaQrcode, FaCreditCard, FaArrowLeft, FaSun, FaMoon } from "react-icons/fa";
 import { Link } from "react-router-dom";
-
+import API from "../api";
 export default function Profile() {
     const [profile, setProfile] = useState(null);
     const email = localStorage.getItem("userEmail");

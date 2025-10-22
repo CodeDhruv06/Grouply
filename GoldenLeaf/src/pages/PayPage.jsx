@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaPaperPlane, FaUser, FaRupeeSign } from "react-icons/fa";
+import API from "../api";
 
 export default function PayPage() {
     const { qrCodeId } = useParams();

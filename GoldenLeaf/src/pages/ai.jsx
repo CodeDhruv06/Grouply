@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { FaMicrophone, FaRobot, FaUser, FaVolumeUp, FaPaperPlane } from "react-icons/fa";
 import { motion } from "framer-motion";
 import Navbar from "../Components/Navbar";
+import API from "../api";
 
 // AI chat with robust speech recognition (Chrome/Edge/Brave) and graceful fallbacks
 export default function VoiceChat() {

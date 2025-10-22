@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaUsers, FaReceipt, FaCoins, FaCheckCircle } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
-
+import API from '../api';
 export default function SplitBill() {
   const navigate = useNavigate();
   const [groups, setGroups] = useState([]);

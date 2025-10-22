@@ -41,7 +41,7 @@ export default function Profile() {
         const res = await API.get(`/profile/${email}`);
         const data = res.data;
 
-        if (res.ok) setProfile(data);
+        if (res.status === 200) setProfile(data);
     }
 
     // Precompute twinkle dots once (hook must be called unconditionally before any return)

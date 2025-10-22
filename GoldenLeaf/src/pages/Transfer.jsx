@@ -35,7 +35,7 @@ export default function Transfer() {
       const data = res.data;
 
 
-      if (res.ok) {
+      if (res.status === 200) {
         const cb = Number(data.cashback || 0);
         const cbMsg = cb > 0 ? ` You earned ₹${cb} cashback!` : "";
         setStatus(`✅ ${data.message}${cbMsg}`);

@@ -191,18 +191,23 @@ export default function VoiceChat() {
             // hit our backend Gemini proxy
             const res = await API.post("/gemini/generate", {
                 prompt: text,
-                email: userEmail
+                email: userEmail,
             });
-            const data = await res.json().catch(() => ({}));
-            const replyText = data?.suggestion || data?.note || "Sorry, something went wrong.";
+
+            const data = res.data || {};
+            const replyText = data.suggestion || data.note || "Sorry, something went wrong.";
+
             const html = formatAiTextToHtml(replyText);
             addMessage("bot", { text: replyText, html });
             speak(replyText);
+
         } catch (e) {
+            console.error("Gemini API error:", e);
             addMessage("bot", "Network error talking to AI. Please try again.");
         } finally {
             setLoading(false);
         }
+
     };
 
     const sendTyped = async () => {
@@ -245,8 +250,8 @@ export default function VoiceChat() {
                             >
                                 <div
                                     className={`max-w-[80%] px-4 py-3 rounded-2xl leading-relaxed text-[15px] ${m.sender === "user"
-                                            ? "bg-[#E86A33] text-black rounded-br-none"
-                                            : "bg-[#1a1208] text-white border border-[#3a2a17] rounded-bl-none"
+                                        ? "bg-[#E86A33] text-black rounded-br-none"
+                                        : "bg-[#1a1208] text-white border border-[#3a2a17] rounded-bl-none"
                                         }`}
                                 >
                                     <div className="flex items-center gap-2 mb-1 text-[13px] opacity-80">

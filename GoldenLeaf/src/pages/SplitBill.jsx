@@ -34,7 +34,7 @@ export default function SplitBill() {
     try {
       const res = await API.get(`/split/my-groups?email=${encodeURIComponent(myEmail)}`);
       const data = res.data;
-      if (res.ok) {
+      if (res.status === 200) {
         setGroups(data.groups || []);
         if ((data.groups || []).length) setSelectedGroup(data.groups[0]._id);
       }
@@ -56,7 +56,7 @@ export default function SplitBill() {
       });
       const data = res.data;
 
-      if (res.ok) {
+      if (res.status === 200) {
         showToast('✅ Group created successfully!');
         setGroupName('');
         setMemberEmails('');
@@ -76,7 +76,7 @@ export default function SplitBill() {
     try {
       const res = await API.get(`/split/group/${gid}/bills`);
       const data = res.data;
-      if (res.ok) setBills(data.bills || []);
+      if (res.status === 200) setBills(data.bills || []);
     } catch (err) {
       console.error(err);
     }
@@ -118,7 +118,7 @@ export default function SplitBill() {
       }
       const res = await API.post('/split/create-bill', payload);
       const data = res.data;
-      if (res.ok) {
+      if (res.status === 200) {
         showToast('✅ Bill created successfully!');
         setTitle('');
         setTotalAmount('');
@@ -142,7 +142,7 @@ export default function SplitBill() {
         execute: false,
       });
       const data = res.data;
-      if (res.ok) {
+      if (res.status === 200) {
         setSettlementPreview({ billId, settlements: data.settlements });
         showToast('👀 Settlement preview ready.');
       } else {
@@ -163,7 +163,7 @@ export default function SplitBill() {
         executorEmail: myEmail,
       });
       const data = res.data;
-      if (res.ok) {
+      if (res.status===200) {
         showToast('✅ Settlement executed successfully!');
         fetchBillsForSelectedGroup(selectedGroup);
         fetchGroups();
